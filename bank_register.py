@@ -71,5 +71,6 @@ Balance: 0
 ''') # Make sure to change the card number to ####-####-####-####
 
 with open('balance.json','w') as fp:
-    start_balance = [0]
+    start_balance = []
+    start_balance.append(float(0))
     json.dump(start_balance,fp,indent=4) # start the intial balance in balance.json
