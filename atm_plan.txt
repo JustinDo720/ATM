@@ -1,0 +1,17 @@
+Card (#### #### #### ####) 16 digits
+    Account register
+    json
+Card_accepted
+    Ask for Pin
+What would you like to do?
+    Withdraw
+    Deposit
+    Quick Cash
+    Check Balance
+        Each should be a different method
+        Consider using pop() for withdraw
+        Use list ^
+        Dont append, save space
+        Consider double ended queue
+Display a Thank you
+Happy customer
