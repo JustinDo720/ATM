@@ -1,7 +1,4 @@
-import random
-import time
-import json
-import sys
+import random, time, json, sys
 
 file_name = 'bank_data.json'
 
@@ -24,6 +21,7 @@ def user_info(fname, lname, age, email, gen_card_number, cvc, pin, minital = Non
     with open(file_name, 'w') as fp:
         json.dump(user_info_dd, fp, indent=4)
 
+
 def gen_card_number():
     user_card_num = []
     for i in range(16):
@@ -40,6 +38,7 @@ def gen_cvc_number():
         cvc_number.append(str(ran_number))
     cvc_number_str = ''.join(cvc_number)
     return cvc_number_str
+
 
 print("Welcome to Justin's bank!\nPlease fill out the following information:")
 fname = input('First Name: ')
@@ -71,6 +70,5 @@ Balance: 0
 ''') # Make sure to change the card number to ####-####-####-####
 
 with open('balance.json','w') as fp:
-    start_balance = []
-    start_balance.append(float(0))
-    json.dump(start_balance,fp,indent=4) # start the intial balance in balance.json
+    start_balance = [float(0)]
+    json.dump(start_balance,fp,indent=4)

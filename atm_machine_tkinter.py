@@ -25,8 +25,8 @@ def deposit_tk():
 
 root = Tk()
 
-atm_label = Label(root,text='ATM')
-atm_label.grid(row=0,column=1)
+atm_label = Label(root,text='Justin\'s ATM')
+atm_label.grid(row=0,column=3)
 
 withdraw_entry = Entry(root)
 withdraw_entry.grid(row=1,column=0, sticky=W)
@@ -35,20 +35,24 @@ withdraw_button = Button(root, text='Withdraw', command=withdraw_tk)
 withdraw_button.grid(row=3, column=0, sticky=W)
 
 deposit_entry = Entry(root)
-deposit_entry.grid(row=1, column=3,sticky=E)
+deposit_entry.grid(row=1, column=10,sticky=E)
 
 deposit_button = Button(root, text='Deposit', command=deposit_tk)
-deposit_button.grid(row=3, column=3, sticky=E)
+deposit_button.grid(row=3, column=10, sticky=E)
+
 
 check_balance_button = Label(root, text= f'Current Balance: ${str(current_balance[0])}', width=50)
-check_balance_button.grid(columnspan=5)
+check_balance_button.grid(row=6, columnspan=15)
 
 greetings_message = messagebox.showinfo('Greetings', 'Please enter an amount or use quick cash :D')
 
-root,mainloop()
+root.mainloop()
 
-actual_balance = list_of_transaction.pop()
+try:
+    actual_balance = list_of_transaction.pop()
+    print(actual_balance)
 
-print(actual_balance)
-with open(file_name, 'w') as f:
-    json.dump(actual_balance,f, indent=4)
+    with open(file_name, 'w') as f:
+        json.dump(actual_balance,f, indent=4)
+except IndexError as error:
+    print('No change in balance')
