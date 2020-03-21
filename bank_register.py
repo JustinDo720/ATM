@@ -1,6 +1,7 @@
-import random, time, json, sys
+import random, time, sys
+import pandas as pd
 
-file_name = 'bank_data.json'
+file_name = 'bank_data.csv'
 
 
 def user_info(fname, lname, age, email, gen_card_number, cvc, pin, minital = None):
@@ -9,17 +10,21 @@ def user_info(fname, lname, age, email, gen_card_number, cvc, pin, minital = Non
     else:
         full_name = f'{fname} {lname}'
 
-    user_info_dd = [dict(
-        full_name =full_name,
+    user_info = [dict(
+        full_name=full_name,
         age=age,
         email=email,
-        card_number= gen_card_number,
-        security_number = cvc,
-        pin = pin,
+        card_number=gen_card_number,
+        security_number=cvc,
+        pin=pin,
+        balance=float(0)
     )]
 
-    with open(file_name, 'w') as fp:
-        json.dump(user_info_dd, fp, indent=4)
+    df = pd.DataFrame()
+    df = df.append(user_info)
+
+    df.to_csv(file_name)
+
 
 
 def gen_card_number():
@@ -69,6 +74,6 @@ Pin Number: {pin}
 Balance: 0
 ''') # Make sure to change the card number to ####-####-####-####
 
-with open('balance.json','w') as fp:
-    start_balance = [float(0)]
-    json.dump(start_balance,fp,indent=4)
+#with open('balance.json','w') as fp:
+    #start_balance = [float(0)]
+    #json.dump(start_balance,fp,indent=4)

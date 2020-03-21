@@ -1,43 +1,44 @@
 import sys
-from json_reader import json_info
-import json
+import pandas as pd
 
-file_name = 'balance.json'
-with open(file_name, 'r') as f:
-    previous_balance = json.load(f)
+file_name = 'bank_data.csv'
+#with open(file_name, 'r') as f:
+ #   previous_balance = json.load(f)
 
-current_balance = [previous_balance[0]]
+bank_data = pd.read_csv(file_name)
+df = pd.DataFrame(bank_data)
+
+current_balance = df['balance'].item()
 
 def authentication(pin):
-    user_pin = json_info[0]['pin']
-    if pin == user_pin:
+    user_pin = df['pin'].item()
+    if pin == int(user_pin):
         return True
     else:
         print('User unauthenticated')
         sys.exit()
 
 
-def print_current_amount(balance):
-    print(f'Current amount after change: {current_balance}')
-
 def withdraw():
     if authentication:
+        global current_balance
         amount = input('Please enter the withdraw amount: ')
-        current_balance[0] -= int(amount)
-        print_current_amount(current_balance)
-
+        current_balance -= float(amount)
+        send_to_data(amount, current_balance)
 
 def deposit():
     if authentication:
+        global current_balance
         amount = input('Please enter the deposit amount: ')
-        current_balance[0] += int(amount)
-        print_current_amount(current_balance)
+        current_balance += float(amount)
+        send_to_data(amount, current_balance)
 
 def quick_cash():
     if authentication:
+        global current_balance
         amount = input('Please enter the amount below:\n$5\n$10\n$20\n$50\n$100\n')
-        current_balance[0] -= int(amount)
-        print_current_amount(current_balance)
+        current_balance -= int(amount)
+        send_to_data(amount, current_balance)
 
 
 def check_balance():
@@ -59,11 +60,11 @@ def option(number):
 
 def screen():
     print('Welcome, please insert your card and enter your pin.')
-    pin = input('Pin: ')
+    pin = int(input('Pin: '))
     authentication(pin)
 
     if authentication:
-        print(f'Welcome {json_info[0]["full_name"]}!')
+        print(f'Welcome {df["full_name"].item()}!')
         print('''Please select the number corresponding to the options below:
     1. Withdraw
     2. Deposit
@@ -73,4 +74,10 @@ def screen():
         user_option = input()
         return user_option
 
+
+def send_to_data(amount, balance):
+    df.loc[0, 'balance'] = balance
+    df.to_csv(file_name)
+    previous_balance = balance - float(amount)
+    print(f'''\nTransferred {amount} completed.\nPrevious Balance: {previous_balance}.\nNew Balance: {balance}''')
 

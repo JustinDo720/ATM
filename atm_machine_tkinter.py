@@ -1,26 +1,41 @@
 from atm_machine_backend import *
 from tkinter import *
 from tkinter import messagebox
-import json
+import pandas as pd
 
-file_name = 'balance.json'
+fp = 'bank_data.csv'
+
+new_bank_data = pd.read_csv(fp)
+new_df = pd.DataFrame(new_bank_data)
+
+tk_current_balance = new_df.balance.item()
+
 list_of_transaction = []
 
 
 def withdraw_tk():
+    global tk_current_balance
     if authentication:
-        current_balance[0] -= float(withdraw_entry.get())
-        new_balance_display = current_balance
-        check_balance_button.config(text= f'Current Balance: ${str(new_balance_display[0])}')
-        list_of_transaction.append(current_balance)
+        tk_current_balance -= float(withdraw_entry.get())
+        new_balance_display = tk_current_balance
+        check_balance_button.config(text= f'Current Balance: ${str(new_balance_display)}')
+        list_of_transaction.append(tk_current_balance)
 
 
 def deposit_tk():
+    global tk_current_balance
     if authentication:
-        current_balance[0] += float(deposit_entry.get())
-        new_balance_display = current_balance
-        check_balance_button.config(text= f'Current Balance: ${str(new_balance_display[0])}')
-        list_of_transaction.append(current_balance)
+        tk_current_balance += float(deposit_entry.get())
+        new_balance_display = tk_current_balance
+        check_balance_button.config(text= f'Current Balance: ${str(new_balance_display)}')
+        list_of_transaction.append(tk_current_balance)
+
+
+def send_to_data_from_tk(balance):
+    df.loc[0, 'balance'] = balance
+    df.to_csv(file_name)
+
+    print(f'''\nNew Balance: {balance}''')
 
 
 root = Tk()
@@ -41,7 +56,7 @@ deposit_button = Button(root, text='Deposit', command=deposit_tk)
 deposit_button.grid(row=3, column=10, sticky=E)
 
 
-check_balance_button = Label(root, text= f'Current Balance: ${str(current_balance[0])}', width=50)
+check_balance_button = Label(root, text= f'Current Balance: ${str(tk_current_balance)}', width=50)
 check_balance_button.grid(row=6, columnspan=15)
 
 greetings_message = messagebox.showinfo('Greetings', 'Please enter an amount or use quick cash :D')
@@ -51,8 +66,6 @@ root.mainloop()
 try:
     actual_balance = list_of_transaction.pop()
     print(actual_balance)
-
-    with open(file_name, 'w') as f:
-        json.dump(actual_balance,f, indent=4)
+    send_to_data_from_tk(balance=actual_balance)
 except IndexError as error:
     print('No change in balance')

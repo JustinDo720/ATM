@@ -7,16 +7,17 @@ df = pd.DataFrame(csv_reader)
 user_pin = df.pin.item()
 user_pin = int(user_pin)
 
-pin = input()
-if pin == str(user_pin):
-    print('Authenticated')
-    print()
+#pin = input()
+#if pin == str(user_pin):
+ #   print('Authenticated')
+ #   print()
 
 user_balance = df['balance'].item()
-
+print(user_balance)
 amount = float(input('Amount:'))
-user_balance += amount
-print(f'New User Balance: ${user_balance}')
+def compute():
+    global user_balance
+    user_balance+= amount
+    print(user_balance)
 
-df['balance'] = user_balance
-df.to_csv(csv_location)
+compute()

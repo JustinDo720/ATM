@@ -2,3 +2,5 @@ venv
 balance.json
 bank_data.json
 __pycache__/
+atm_tb.csv
+bank_data.csv
