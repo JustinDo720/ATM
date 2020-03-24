@@ -1,6 +1,4 @@
 venv
-balance.json
-bank_data.json
+First Json Usage
 __pycache__/
-atm_tb.csv
-bank_data.csv
+First Pandas Integration

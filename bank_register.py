@@ -10,6 +10,8 @@ def user_info(fname, lname, age, email, gen_card_number, cvc, pin, minital = Non
     else:
         full_name = f'{fname} {lname}'
 
+    starting_balance = float(0)
+
     user_info = [dict(
         full_name=full_name,
         age=age,
@@ -17,14 +19,13 @@ def user_info(fname, lname, age, email, gen_card_number, cvc, pin, minital = Non
         card_number=gen_card_number,
         security_number=cvc,
         pin=pin,
-        balance=float(0)
+        balance=starting_balance
     )]
 
     df = pd.DataFrame()
     df = df.append(user_info)
 
-    df.to_csv(file_name)
-
+    df.to_csv(file_name, mode='a', header=False)
 
 
 def gen_card_number():
@@ -32,6 +33,10 @@ def gen_card_number():
     for i in range(16):
         ran_number = random.randrange(0, 9)
         user_card_num.append(str(ran_number))
+        while user_card_num[0] == '0':
+            user_card_num[0] = str(ran_number)
+            while user_card_num[12] == '0':
+                user_card_num[12] = str(ran_number)
     user_card_num_str = ''.join(user_card_num)
     return user_card_num_str
 
@@ -41,6 +46,8 @@ def gen_cvc_number():
     for i in range(3):
         ran_number = random.randrange(0, 9)
         cvc_number.append(str(ran_number))
+        while cvc_number[0] == '0':
+            cvc_number[0] = str(ran_number)
     cvc_number_str = ''.join(cvc_number)
     return cvc_number_str
 
@@ -49,31 +56,30 @@ print("Welcome to Justin's bank!\nPlease fill out the following information:")
 fname = input('First Name: ')
 minit = input('Middle Initial(Press enter to skip): ')
 lname = input('Last Name: ')
-age = input('Age: ')
 email = input('Email: ')
-pin = input('4-Digit Pin: ')
 
-if age < '18':
-    print('We apologize but you are not older enough')
-    sys.exit()
-else:
-    while len(pin) != 4:
-        pin = input('Please enter 4 digits: ')
+try:
+    age = int(input('Age: '))
+    pin = int(input('4-Digit Pin: '))
+    if age < 18:
+        print('We apologize but you are not older enough')
+        sys.exit()
+    else:
+        while len(str(pin)) != 4:
+            pin = input('Please enter 4 digits: ')
+    print('Please wait...')
+    time.sleep(1)
 
-print('Please wait...')
-time.sleep(3)
+    card_number = gen_card_number()
+    cvc_number = gen_cvc_number()
+    user_info(fname, lname, age, email, card_number, cvc_number, pin, minit)
 
-card_number = gen_card_number()
-cvc_number = gen_cvc_number()
-user_info(fname, lname, age, email,card_number, cvc_number, pin, minit)
+    print(f'''\nPlease save your information:
+        Card Number:%s-%s-%s-%s 
+        Cvc Number: {cvc_number}
+        Pin Number: {pin}
+        Balance: 0
+        ''' % (card_number[:4], card_number[4:8], card_number[8:12], card_number[12:16]))
+except ValueError as error:
+    print('Please enter numbers')
 
-print(f'''\nPlease save your information:
-Card Number: {card_number} 
-Cvc Number: {cvc_number}
-Pin Number: {pin}
-Balance: 0
-''') # Make sure to change the card number to ####-####-####-####
-
-#with open('balance.json','w') as fp:
-    #start_balance = [float(0)]
-    #json.dump(start_balance,fp,indent=4)
