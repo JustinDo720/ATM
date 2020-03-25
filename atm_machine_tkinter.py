@@ -8,27 +8,26 @@ fp = 'bank_data.csv'
 new_bank_data = pd.read_csv(fp)
 new_df = pd.DataFrame(new_bank_data)
 
-tk_current_balance = new_df.balance.item()
+for rows in range(df.shape[0]):
+    tk_current_balance = df[rows, 'balance']
 
 list_of_transaction = []
 
 
 def withdraw_tk():
     global tk_current_balance
-    if authentication:
-        tk_current_balance -= float(withdraw_entry.get())
-        new_balance_display = tk_current_balance
-        check_balance_button.config(text= f'Current Balance: ${str(new_balance_display)}')
-        list_of_transaction.append(tk_current_balance)
+    tk_current_balance -= float(withdraw_entry.get())
+    new_balance_display = tk_current_balance
+    check_balance_button.config(text= f'Current Balance: ${str(new_balance_display)}')
+    list_of_transaction.append(tk_current_balance)
 
 
 def deposit_tk():
     global tk_current_balance
-    if authentication:
-        tk_current_balance += float(deposit_entry.get())
-        new_balance_display = tk_current_balance
-        check_balance_button.config(text= f'Current Balance: ${str(new_balance_display)}')
-        list_of_transaction.append(tk_current_balance)
+    tk_current_balance += float(deposit_entry.get())
+    new_balance_display = tk_current_balance
+    check_balance_button.config(text= f'Current Balance: ${str(new_balance_display)}')
+    list_of_transaction.append(tk_current_balance)
 
 
 def send_to_data_from_tk(balance):
