@@ -4,6 +4,8 @@ import pandas as pd
 from collections import deque
 
 fp = 'bank_data.csv'
+logo_position = './pictures/atm.png'
+show_pass_position = './pictures/rsz_cass_eye_pass.png'
 
 bank_data = pd.read_csv(fp)
 df = pd.DataFrame(bank_data)
@@ -50,30 +52,85 @@ def login_screen():
     root = Tk()
     root.title('Login Page')
     root.config(bg='gainsboro')
-    root.geometry('300x200')
+    root.geometry('450x350')
     login_label = Label(root, text='Login', fg='purple',bg='gainsboro')
     login_label.config(font=100)
-    login_label.grid(row=0, column=1)
+    login_label.grid(row=0, column=1, pady=30)
+    logo_photo = PhotoImage(file=logo_position)
+    atm_logo = Label(root, image=logo_photo)
+    atm_logo.grid(row=2, column= 4, padx=20)
 
+    def show_four_digits():
+        entry = Entry(root)
+        entry.grid(row=1, column=1)
+        hide_pass = Button(root, image=show_pass_photo, command=hide_four_digits)
+        hide_pass.config(width=10, height=10)
+        hide_pass.grid(row=1, column=2)
+
+    def hide_four_digits():
+        entry = Entry(root, show='*')
+        entry.grid(row=1, column=1)
+        show_pass = Button(root, image=show_pass_photo, command=show_four_digits)
+        show_pass.config(width=10, height=10)
+        show_pass.grid(row=1, column=2)
+
+    show_pass_photo = PhotoImage(file=show_pass_position)
     four_digits_label = Label(root, text='Last Four Digits:',bg='gainsboro')
     four_digits_label.grid(row=1, sticky=N+S+E+W)
     four_digits_entry = Entry(root,show="*")
     four_digits_entry.grid(row=1, column=1)
+    four_digits_show_pass = Button(root, image=show_pass_photo,command=show_four_digits)
+    four_digits_show_pass.config(width=10, height=10)
+    four_digits_show_pass.grid(row=1, column=2)
+
+    def show_cvc():
+        entry = Entry(root)
+        entry.grid(row=2, column=1)
+        hide_pass = Button(root, image=show_pass_photo, command=hide_cvc)
+        hide_pass.config(width=10, height=10)
+        hide_pass.grid(row=2, column=2)
+
+    def hide_cvc():
+        entry = Entry(root, show="*")
+        entry.grid(row=2, column=1)
+        hide_pass = Button(root, image=show_pass_photo, command=show_cvc)
+        hide_pass.config(width=10, height=10)
+        hide_pass.grid(row=2, column=2)
 
     cvc_label = Label(root, text='Cvc:', bg='gainsboro')
     cvc_label.grid(row=2, sticky=E)
     cvc_label_entry = Entry(root, show="*")
     cvc_label_entry.grid(row=2, column=1)
+    cvc_show_pass = Button(root, image=show_pass_photo, command=show_cvc)
+    cvc_show_pass.config(width=10, height=10)
+    cvc_show_pass.grid(row=2, column=2)
+
+    def show_pin():
+        entry = Entry(root)
+        entry.grid(row=3, column=1)
+        hide_pass = Button(root, image=show_pass_photo, command=hide_pin)
+        hide_pass.config(width=10, height=10)
+        hide_pass.grid(row=3, column=2)
+
+    def hide_pin():
+        entry = Entry(root, show="*")
+        entry.grid(row=3, column=1)
+        show_pass = Button(root, image=show_pass_photo, command=show_pin)
+        show_pass.config(width=10, height=10)
+        show_pass.grid(row=3, column=2)
 
     pin_label = Label(root, text='Pin:', bg='gainsboro')
     pin_label.grid(row=3, sticky=E)
     pin_entry = Entry(root, show="*")
     pin_entry.grid(row=3, column=1)
+    pin_show_pass = Button(root, image=show_pass_photo, command=show_pin)
+    pin_show_pass.config(width=10, height=10)
+    pin_show_pass.grid(row=3, column=2)
 
     submit_button = Button(root, text='Login',command= authenticate_all, bg='gainsboro')
-    submit_button.grid(row=4, column=1)
+    submit_button.grid(row=4, column=1, pady= 10)
     cancel_button = Button(root, text='Cancel', command= root.destroy, bg='gainsboro')
-    cancel_button.grid(row=4, column=0)
+    cancel_button.grid(row=4, column=0, pady=10)
 
     root.mainloop()
 
@@ -114,7 +171,7 @@ def atm_machine():
         else:
             df.to_csv(fp, mode='w')
 
-        balance_message = messagebox.showinfo(title='Saved Balance', message=f'New Balance: ${final_balance}')
+        messagebox.showinfo(title='Saved Balance', message=f'New Balance: ${final_balance}')
         print(f'''\nNew Balance: {final_balance}''')
 
     root1 = Tk()
