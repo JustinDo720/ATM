@@ -1,5 +1,6 @@
-import random, time, sys
+import random
 import pandas as pd
+from sys import exit
 
 file_name = 'bank_data.csv'
 
@@ -67,12 +68,10 @@ def main_screen():
         pin = int(input('4-Digit Pin: '))
         if age < 18:
             print('We apologize but you are not older enough')
-            sys.exit()
+            exit()
         else:
             while len(str(pin)) != 4:
                 pin = input('Please enter 4 digits: ')
-        print('Please wait...')
-        time.sleep(1)
 
         card_number = gen_card_number()
         cvc_number = gen_cvc_number()
@@ -86,9 +85,14 @@ def main_screen():
             ''' % (card_number[:4], card_number[4:8], card_number[8:12], card_number[12:16]))
     except ValueError as error:
         print('Please enter numbers')
-        continue_adding_user = input('Would you like to add another person?').lower()
-        while continue_adding_user[0] == 'y':
-            main_screen()
+
+    continue_adding_user = input('Would you like to add another person?').lower()
+    if continue_adding_user[0] == 'y':
+        print()
+        main_screen()
+    else:
+        print('Thank you! Your accounts have been registered.')
+        exit()
 
 
 main_screen()

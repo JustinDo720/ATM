@@ -11,6 +11,7 @@ def authentication(four_digits, cvc):
 
     df['card_number'] = df['card_number'].astype(dtype=str)
     df['four_digits'] = df['card_number'].apply(lambda x: x[12:16])
+    df['four_digits_2'] = df['card_number'].apply(lambda x: x[11:15])
 
     df['security_number'] = df['security_number'].astype(dtype=str)
     df['three_cvc'] = df['security_number'].apply(lambda x: x[:3])
@@ -20,6 +21,9 @@ def authentication(four_digits, cvc):
 
     for rows in range(df.shape[0]):
         auth_four_digits = df.loc[rows, 'four_digits']
+        if '.' in auth_four_digits:
+            auth_four_digits = df.loc[rows, 'four_digits_2']
+
         auth_cvc = df.loc[rows, 'three_cvc']
 
         if four_digits == auth_four_digits and cvc == auth_cvc:
@@ -51,6 +55,8 @@ def withdraw():
     amount = input('Please enter the withdraw amount: ')
     current_balance[0] -= float(amount)
     send_to_data(amount, current_balance)
+    choice = authenticated_screen()
+    option(choice)
 
 
 def deposit():
@@ -58,6 +64,8 @@ def deposit():
     amount = input('Please enter the deposit amount: ')
     current_balance[0] += float(amount)
     send_to_data(amount, current_balance)
+    choice = authenticated_screen()
+    option(choice)
 
 
 def quick_cash():
@@ -65,10 +73,14 @@ def quick_cash():
     amount = input('Please enter the amount below:\n$5\n$10\n$20\n$50\n$100\n')
     current_balance[0] -= int(amount)
     send_to_data(amount, current_balance)
+    choice = authenticated_screen()
+    option(choice)
 
 
 def check_balance():
     print(f'Current balance: {current_balance[0]}')
+    choice = authenticated_screen()
+    option(choice)
 
 
 def option(number):
@@ -81,10 +93,23 @@ def option(number):
         quick_cash()
     elif number == '4':
         check_balance()
+    elif number == '5':
+        screen()
     else:
         print('Thank You')
         sys.exit()
 
+
+def authenticated_screen():
+    print('''\nPlease select the number corresponding to the options below:
+        1. Withdraw
+        2. Deposit
+        3. Quick Cash
+        4. Check Balance
+        5. Log out
+        6. Exit ATM''')
+    user_option = input()
+    return user_option
 
 def screen():
     print('Welcome, please enter the last 4 digits on your card and cvc.')
@@ -99,13 +124,7 @@ def screen():
         chances += 1
 
     if authenticated:
-        print('''\nPlease select the number corresponding to the options below:
-    1. Withdraw
-    2. Deposit
-    3. Quick Cash
-    4. Check Balance
-    5. Exit''')
-        user_option = input()
+        user_option = authenticated_screen()
         return user_option
     else:
         print('User Unauthenticated')

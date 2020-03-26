@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import messagebox
 import pandas as pd
 from collections import deque
-from time import sleep
 
 fp = 'bank_data.csv'
 
@@ -38,7 +37,6 @@ def login_screen():
                 user_information['index'] = rows
                 user_information['balance'] = df.loc[rows,'balance']
                 user_information['user'] = user
-                sleep(1)
 
                 root.withdraw()
                 atm_machine()
@@ -116,6 +114,7 @@ def atm_machine():
         else:
             df.to_csv(fp, mode='w')
 
+        balance_message = messagebox.showinfo(title='Saved Balance', message=f'New Balance: ${final_balance}')
         print(f'''\nNew Balance: {final_balance}''')
 
     root1 = Tk()
