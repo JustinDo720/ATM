@@ -1,23 +1,24 @@
-from atm_machine_backend import *
 from tkinter import *
 from tkinter import messagebox
 import pandas as pd
+from collections import deque
+from time import sleep
 
 fp = 'bank_data.csv'
 
 bank_data = pd.read_csv(fp)
 df = pd.DataFrame(bank_data)
-user_index = []
+user_information = {}
+test_balance = deque(maxlen=1)
 
 
 def login_screen():
-    global user_index
 
     def authenticate_all():
         df['card_number'] = df['card_number'].astype(dtype=str)
         df['four_digits'] = df['card_number'].apply(lambda x: x[12:16])
 
-        for rows in range(df.shape[0]):
+        for rows in df.index:
             auth_four_digits = df.loc[rows, 'four_digits']
             auth_cvc = df.loc[rows, 'security_number']
             auth_pin = df.loc[rows, 'pin']
@@ -26,16 +27,19 @@ def login_screen():
                     and float(auth_cvc) == float(cvc_label_entry.get()+'.0')\
                     and float(auth_pin) == float(pin_entry.get()+'.0'):
                 user = df.loc[rows]
-                user_index.append(rows)
-                authenticated_message = messagebox.showinfo(title='Authenticated', message=f'Welcome {user["full_name"]}!')
+                test_balance.append(df.loc[rows,'balance'])
+                user_information['index'] = rows
+                user_information['balance'] = df.loc[rows,'balance']
+                user_information['user'] = user
+
                 root.withdraw()
                 atm_machine()
                 return True
-            else:
-                status_bar = Label(root, text='Please try again.', fg='Red', bg='gainsboro')
-                status_bar.config(font=30)
-                status_bar.grid(row=5, columnspan=2)
-                return False
+
+        if auth_four_digits != four_digits_entry.get():
+            status_bar = Label(root, text='Please try again.', fg='Red', bg='gainsboro')
+            status_bar.config(font=30)
+            status_bar.grid(row=5, columnspan=2)
 
     root = Tk()
     root.title('Login Page')
@@ -72,66 +76,64 @@ def login_screen():
 
 
 def atm_machine():
-    global user_index
-
-    list_of_transaction = []
-    tk_current_balance = df.loc[user_index[0], 'balance']
-    tk_current_user = df.loc[user_index[0]]
-    print(tk_current_balance)
+    global user_information
+    list_of_transaction = deque(maxlen=3)
+    tk_current_user = user_information['user']
+    current_balance = user_information['balance']
 
     def withdraw_tk():
-        global tk_current_balance
+        global test_balance
+        tk_current_balance = test_balance[0]
         tk_current_balance -= float(withdraw_entry.get())
         new_balance_display = tk_current_balance
-        check_balance_button.config(text=f'Current Balance: ${str(new_balance_display)}')
+        test_balance.append(new_balance_display)
+        check_balance_label.config(text=f'Current Balance: ${str(new_balance_display)}')
         list_of_transaction.append(tk_current_balance)
 
     def deposit_tk():
-        global tk_current_balance
+        global test_balance
+        tk_current_balance = test_balance[0]
         tk_current_balance += float(deposit_entry.get())
         new_balance_display = tk_current_balance
-        check_balance_button.config(text=f'Current Balance: ${str(new_balance_display)}')
+        test_balance.append(new_balance_display)
+        check_balance_label.config(text=f'Current Balance: ${str(new_balance_display)}')
         list_of_transaction.append(tk_current_balance)
 
-    def send_to_data_from_tk(balance):
-        global tk_current_balance
-        tk_current_balance = balance
-        print(df)
-        #df.to_csv(file_name)
+    def send_to_data_from_tk():
+        global test_balance
+        final_balance = test_balance[0]
+        df.loc[user_information['index'], 'balance'] = final_balance
+        if 0 in df.index:
+            df.to_csv(fp, mode='w', index=False)
+        else:
+            df.to_csv(fp, mode='w')
 
-        print(f'''\nNew Balance: {balance}''')
+        print(f'''\nNew Balance: {final_balance}''')
 
     root1 = Tk()
     root1.title('Account: {}'.format(tk_current_user['full_name']))
 
-    atm_label = Label(root1, text='Justin\'s ATM')
-    atm_label.grid(row=0, column=3)
+    new_atm_label = Label(root1, text='Justin\'s ATM', font=100)
+    new_atm_label.grid(row=0, column=2)
 
     withdraw_entry = Entry(root1)
     withdraw_entry.grid(row=1, column=0, sticky=W)
-
     withdraw_button = Button(root1, text='Withdraw', command=withdraw_tk)
     withdraw_button.grid(row=3, column=0, sticky=W)
 
     deposit_entry = Entry(root1)
-    deposit_entry.grid(row=1, column=10, sticky=E)
-
+    deposit_entry.grid(row=1, column=3)
     deposit_button = Button(root1, text='Deposit', command=deposit_tk)
-    deposit_button.grid(row=3, column=10, sticky=E)
+    deposit_button.grid(row=3, column=3)
 
-    check_balance_button = Label(root1, text=f'Current Balance: ${str(tk_current_balance)}', width=50)
-    check_balance_button.grid(row=6, columnspan=15)
+    check_balance_label = Label(root1, text=f'Current Balance: ${str(current_balance)}', font=75)
+    check_balance_label.grid(row=4, column=2)
 
-    greetings_message = messagebox.showinfo('Greetings', 'Please enter an amount or use quick cash :D')
+    save_button = Button(root1, text='Save', command=send_to_data_from_tk)
+    save_button.grid(row=5, column=2)
+
+    greetings_message = messagebox.showinfo('Greetings', f'Welcome {df.loc[user_information["index"],"full_name"]}!')
 
     root1.mainloop()
-
-    try:
-        actual_balance = list_of_transaction.pop()
-        print(actual_balance)
-        send_to_data_from_tk(balance=actual_balance)
-    except IndexError as error:
-        print('No change in balance')
-
 
 login_screen()

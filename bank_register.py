@@ -30,13 +30,16 @@ def user_info(fname, lname, age, email, gen_card_number, cvc, pin, minital = Non
 
 def gen_card_number():
     user_card_num = []
+
     for i in range(16):
         ran_number = random.randrange(0, 9)
+        number_without_zero = random.randrange(1, 9)
         user_card_num.append(str(ran_number))
-        while user_card_num[0] == '0':
-            user_card_num[0] = str(ran_number)
-            while user_card_num[12] == '0':
-                user_card_num[12] = str(ran_number)
+
+    while user_card_num[0] == '0' or user_card_num[12] == '0':
+        user_card_num[0] = str(number_without_zero)
+        user_card_num[12] = str(number_without_zero)
+
     user_card_num_str = ''.join(user_card_num)
     return user_card_num_str
 
