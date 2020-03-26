@@ -15,22 +15,30 @@ test_balance = deque(maxlen=1)
 def login_screen():
 
     def authenticate_all():
+
         df['card_number'] = df['card_number'].astype(dtype=str)
         df['four_digits'] = df['card_number'].apply(lambda x: x[12:16])
 
+        df['security_number'] = df['security_number'].astype(dtype=str)
+        df['three_cvc'] = df['security_number'].apply(lambda x: x[:3])
+
+        df['pin'] = df['pin'].astype(dtype=str)
+        df['four_pin'] = df['pin'].apply(lambda x: x[:4])
+
         for rows in df.index:
             auth_four_digits = df.loc[rows, 'four_digits']
-            auth_cvc = df.loc[rows, 'security_number']
-            auth_pin = df.loc[rows, 'pin']
+            auth_cvc = df.loc[rows, 'three_cvc']
+            auth_pin = df.loc[rows, 'four_pin']
 
             if auth_four_digits == four_digits_entry.get()\
-                    and float(auth_cvc) == float(cvc_label_entry.get()+'.0')\
-                    and float(auth_pin) == float(pin_entry.get()+'.0'):
+                    and str(auth_cvc) == str(cvc_label_entry.get())\
+                    and str(auth_pin) == str(pin_entry.get()):
                 user = df.loc[rows]
                 test_balance.append(df.loc[rows,'balance'])
                 user_information['index'] = rows
                 user_information['balance'] = df.loc[rows,'balance']
                 user_information['user'] = user
+                sleep(1)
 
                 root.withdraw()
                 atm_machine()

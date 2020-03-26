@@ -1,6 +1,5 @@
 import sys
 import pandas as pd
-from collections import deque
 
 file_name = 'bank_data.csv'
 
@@ -13,24 +12,29 @@ def authentication(four_digits, cvc):
     df['card_number'] = df['card_number'].astype(dtype=str)
     df['four_digits'] = df['card_number'].apply(lambda x: x[12:16])
 
+    df['security_number'] = df['security_number'].astype(dtype=str)
+    df['three_cvc'] = df['security_number'].apply(lambda x: x[:3])
+
+    df['pin'] = df['pin'].astype(dtype=str)
+    df['four_pin'] = df['pin'].apply(lambda x: x[:4])
+
     for rows in range(df.shape[0]):
         auth_four_digits = df.loc[rows, 'four_digits']
-        auth_cvc = df.loc[rows, 'security_number']
+        auth_cvc = df.loc[rows, 'three_cvc']
 
         if four_digits == auth_four_digits and cvc == auth_cvc:
             new_data = df.loc[rows]
             print(f"\nWelcome {new_data['full_name']}! Please enter your pin:")
             chances = 0
             while chances != 3:
-                pin = int(input('Pin: '))
-                if pin == new_data['pin']:
+                pin = str(input('Pin: '))
+                if pin == new_data['four_pin']:
                     user_information(index=rows)
                     print('Authenticated')
                     return True
                 else:
                     print('Failed Authentication. Please try again later...')
                     chances += 1
-
 
 current_balance = []
 index_list = []
@@ -88,7 +92,7 @@ def screen():
     chances = 0
     while chances != 3:
         four_digits = str(input('Last 4 digits on your card: '))
-        cvc = int(input('Cvc: '))
+        cvc = str(input('Cvc: '))
         authenticated = authentication(four_digits, cvc)
         if authenticated:
             break
