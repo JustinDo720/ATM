@@ -2,7 +2,7 @@ import random
 import pandas as pd
 from sys import exit
 
-file_name = 'bank_data.csv'
+file_name = 'ATM_backend/bank_data.csv'
 
 
 def user_info(fname, lname, age, email, gen_card_number, cvc, pin, minital = None):

@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 
-file_name = 'bank_data.csv'
+file_name = 'ATM_backend/bank_data.csv'
 
 bank_data = pd.read_csv(file_name)
 df = pd.DataFrame(bank_data)
@@ -78,10 +78,9 @@ def quick_cash():
 
 
 def check_balance():
-    print(f'Current balance: {current_balance[0]}')
+    print(f'Current balance: ${current_balance[0]}')
     choice = authenticated_screen()
     option(choice)
-
 
 def option(number):
 
@@ -93,8 +92,6 @@ def option(number):
         quick_cash()
     elif number == '4':
         check_balance()
-    elif number == '5':
-        screen()
     else:
         print('Thank You')
         sys.exit()
@@ -106,8 +103,7 @@ def authenticated_screen():
         2. Deposit
         3. Quick Cash
         4. Check Balance
-        5. Log out
-        6. Exit ATM''')
+        5. Exit ATM''')
     user_option = input()
     return user_option
 
@@ -141,4 +137,4 @@ def send_to_data(amount, balance):
     else:
         df.to_csv(file_name, mode='w')
     previous_balance = balance[0] - float(amount)
-    print(f'''\nTransferred {amount} completed.\nPrevious Balance: {previous_balance}.\nNew Balance: {balance[0]}''')
+    print(f'''\nTransferred ${amount} completed.\nPrevious Balance: ${previous_balance}.\nNew Balance: ${balance[0]}''')

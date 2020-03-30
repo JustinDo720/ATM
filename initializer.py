@@ -1,6 +1,6 @@
 import pandas as pd
 
-file_name = 'bank_data.csv'
+file_name = 'ATM_backend/bank_data.csv'
 
 start_info = [dict(
         full_name=None,

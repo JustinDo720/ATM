@@ -3,7 +3,7 @@ from tkinter import messagebox
 import pandas as pd
 from collections import deque
 
-fp = 'bank_data.csv'
+fp = 'ATM_backend/bank_data.csv'
 logo_position = './pictures/atm.png'
 show_pass_position = './pictures/rsz_cass_eye_pass.png'
 
