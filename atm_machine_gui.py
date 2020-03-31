@@ -19,6 +19,7 @@ def login_screen():
 
         df['card_number'] = df['card_number'].astype(dtype=str)
         df['four_digits'] = df['card_number'].apply(lambda x: x[12:16])
+        df['four_digits_2'] = df['card_number'].apply(lambda x: x[11:15])
 
         df['security_number'] = df['security_number'].astype(dtype=str)
         df['three_cvc'] = df['security_number'].apply(lambda x: x[:3])
@@ -28,6 +29,8 @@ def login_screen():
 
         for rows in df.index:
             auth_four_digits = df.loc[rows, 'four_digits']
+            if '.' in auth_four_digits:
+                auth_four_digits = df.loc[rows, 'four_digits_2']
             auth_cvc = df.loc[rows, 'three_cvc']
             auth_pin = df.loc[rows, 'four_pin']
 
@@ -45,6 +48,7 @@ def login_screen():
                 return True
 
         if auth_four_digits != four_digits_entry.get():
+            print(four_digits_entry.get())
             status_bar = Label(root, text='Please try again.', fg='Red', bg='gainsboro')
             status_bar.config(font=30)
             status_bar.grid(row=5, columnspan=2)
@@ -60,72 +64,39 @@ def login_screen():
     atm_logo = Label(root, image=logo_photo)
     atm_logo.grid(row=2, column= 4, padx=20)
 
-    def show_four_digits():
-        entry = Entry(root)
-        entry.grid(row=1, column=1)
-        hide_pass = Button(root, image=show_pass_photo, command=hide_four_digits)
-        hide_pass.config(width=10, height=10)
-        hide_pass.grid(row=1, column=2)
-
-    def hide_four_digits():
-        entry = Entry(root, show='*')
-        entry.grid(row=1, column=1)
-        show_pass = Button(root, image=show_pass_photo, command=show_four_digits)
-        show_pass.config(width=10, height=10)
-        show_pass.grid(row=1, column=2)
+    def four_digits_help():
+        messagebox.showinfo(title='Help', message='Please enter the last four digits on your card.')
 
     show_pass_photo = PhotoImage(file=show_pass_position)
     four_digits_label = Label(root, text='Last Four Digits:',bg='gainsboro')
     four_digits_label.grid(row=1, sticky=N+S+E+W)
     four_digits_entry = Entry(root,show="*")
     four_digits_entry.grid(row=1, column=1)
-    four_digits_show_pass = Button(root, image=show_pass_photo,command=show_four_digits)
-    four_digits_show_pass.config(width=10, height=10)
-    four_digits_show_pass.grid(row=1, column=2)
+    four_digits_help_button = Button(root, image=show_pass_photo, command=four_digits_help)
+    four_digits_help_button.config(width=10, height=10)
+    four_digits_help_button.grid(row=1, column=2)
 
-    def show_cvc():
-        entry = Entry(root)
-        entry.grid(row=2, column=1)
-        hide_pass = Button(root, image=show_pass_photo, command=hide_cvc)
-        hide_pass.config(width=10, height=10)
-        hide_pass.grid(row=2, column=2)
-
-    def hide_cvc():
-        entry = Entry(root, show="*")
-        entry.grid(row=2, column=1)
-        hide_pass = Button(root, image=show_pass_photo, command=show_cvc)
-        hide_pass.config(width=10, height=10)
-        hide_pass.grid(row=2, column=2)
+    def cvc_help():
+        messagebox.showinfo(title='Help', message='Please enter the three digits on the back of your card.')
 
     cvc_label = Label(root, text='Cvc:', bg='gainsboro')
     cvc_label.grid(row=2, sticky=E)
     cvc_label_entry = Entry(root, show="*")
     cvc_label_entry.grid(row=2, column=1)
-    cvc_show_pass = Button(root, image=show_pass_photo, command=show_cvc)
-    cvc_show_pass.config(width=10, height=10)
-    cvc_show_pass.grid(row=2, column=2)
+    cvc_help_button = Button(root, image=show_pass_photo, command= cvc_help)
+    cvc_help_button.config(width=10, height=10)
+    cvc_help_button.grid(row=2, column=2)
 
-    def show_pin():
-        entry = Entry(root)
-        entry.grid(row=3, column=1)
-        hide_pass = Button(root, image=show_pass_photo, command=hide_pin)
-        hide_pass.config(width=10, height=10)
-        hide_pass.grid(row=3, column=2)
-
-    def hide_pin():
-        entry = Entry(root, show="*")
-        entry.grid(row=3, column=1)
-        show_pass = Button(root, image=show_pass_photo, command=show_pin)
-        show_pass.config(width=10, height=10)
-        show_pass.grid(row=3, column=2)
+    def pin_help():
+        messagebox.showinfo(title='Help', message='Please enter your pin.')
 
     pin_label = Label(root, text='Pin:', bg='gainsboro')
     pin_label.grid(row=3, sticky=E)
     pin_entry = Entry(root, show="*")
     pin_entry.grid(row=3, column=1)
-    pin_show_pass = Button(root, image=show_pass_photo, command=show_pin)
-    pin_show_pass.config(width=10, height=10)
-    pin_show_pass.grid(row=3, column=2)
+    pin_help_button = Button(root, image=show_pass_photo, command= pin_help)
+    pin_help_button.config(width=10, height=10)
+    pin_help_button.grid(row=3, column=2)
 
     submit_button = Button(root, text='Login',command= authenticate_all, bg='gainsboro')
     submit_button.grid(row=4, column=1, pady= 10)
